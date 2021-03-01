@@ -1,7 +1,7 @@
 {
   "xsappname": "approval",
   "tenant-mode": "dedicated",
-  "description": "Security profile of called application",
+  "description": "Security profile of called application-2",
   "scopes": [
     {
       "name": "uaa.user",
