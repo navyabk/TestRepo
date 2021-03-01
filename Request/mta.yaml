@@ -1,0 +1,102 @@
+_schema-version: "3.2"
+ID: Request
+version: 0.0.1
+modules:
+  - name: Request-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: Request-destination-service
+        parameters:
+          content-target: true
+      - name: Request_html_repo_host
+        parameters:
+          service-key:
+            name: Request_html_repo_host-key
+      - name: uaa_Request
+        parameters:
+          service-key:
+            name: uaa_Request-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: Request_Request_html_repo_host
+              ServiceInstanceName: Default-app-host
+              ServiceKeyName: Request_html_repo_host-key
+              sap.cloud.service: Request
+            - Authentication: OAuth2UserTokenExchange
+              Name: Request_uaa_Request
+              ServiceInstanceName: Default-XSUAA
+              ServiceKeyName: uaa_Request-key
+              sap.cloud.service: Request
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
+  - name: Request_ui_deployer
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: Request_html_repo_host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - RequestModule-content.zip
+          name: RequestModule
+          target-path: resources/
+        - artifacts:
+            - request1.zip
+          name: request1
+          target-path: resources/
+  - name: RequestModule
+    type: html5
+    path: RequestModule
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+  - name: request1
+    type: html5
+    path: request_1
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+resources:
+  - name: Request-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+      service: destination
+      service-name: Default-destination
+      service-plan: lite
+  - name: Request_html_repo_host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: Default-app-host
+      service-plan: app-host
+  - name: uaa_Request
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: Default-XSUAA
+      service-plan: application
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install
+parameters:
+  deploy_mode: html5-repo

@@ -1,0 +1,84 @@
+_schema-version: "3.2"
+ID: Approval
+version: 0.0.1
+modules:
+- name: Approval-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: Approval-destination-service
+    parameters:
+      content-target: true
+  - name: Approval_html_repo_host
+    parameters:
+      service-key:
+        name: Approval_html_repo_host-key
+  - name: uaa_Approval
+    parameters:
+      service-key:
+        name: uaa_Approval-key
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        - Name: Approval_Approval_html_repo_host
+          ServiceInstanceName: Default-app-host
+          ServiceKeyName: Approval_html_repo_host-key
+          sap.cloud.service: Approval
+        - Authentication: OAuth2UserTokenExchange
+          Name: Approval_uaa_Approval
+          ServiceInstanceName: Default-XSUAA
+          ServiceKeyName: uaa_Approval-key
+          sap.cloud.service: Approval
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: Approval_ui_deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: Approval_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - approval-content.zip
+      name: approval
+      target-path: resources/
+- name: approval
+  type: html5
+  path: approval
+  build-parameters:
+    builder: custom
+    commands:
+    - npm run build
+    supported-platforms: []
+resources:
+- name: Approval-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      version: 1.0.0
+    service: destination
+    service-name: Default-destination
+    service-plan: lite
+- name: Approval_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: Default-app-host
+    service-plan: app-host
+- name: uaa_Approval
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: Default-XSUAA
+    service-plan: application
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install

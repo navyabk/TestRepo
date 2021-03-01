@@ -1,0 +1,22 @@
+<mvc:View controllerName="ns.approval.controller.View1" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m">
+	<Shell id="shell">
+		<App id="app">
+			<pages>
+				<Page id="page" title="Title">
+					<content>
+                    <ObjectHeader title="{/task/Title}" titleActive="false" id="__header0">
+						<attributes>
+							<ObjectAttribute title="createdOn asdf" text="{/task/CreatedOn}"/>
+							<ObjectAttribute title="description  dfsf" text="{/task/Description}"/>
+						</attributes>
+						<statuses>
+							<ObjectStatus text="{/task/Status}" state="None"/>
+							<ObjectStatus text="{/task/Priority}" state="{/task/PriorityState}"/>
+						</statuses>
+					</ObjectHeader>
+                    </content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>
