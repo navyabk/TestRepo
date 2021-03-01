@@ -46,9 +46,21 @@ modules:
       - TestGitModule-content.zip
       name: TestGitModule
       target-path: resources/
+    - artifacts:
+      - Test1Module-content.zip
+      name: Test1Module
+      target-path: resources/
 - name: TestGitModule
   type: html5
   path: TestGitModule
+  build-parameters:
+    builder: custom
+    commands:
+    - npm run build
+    supported-platforms: []
+- name: Test1Module
+  type: html5
+  path: Test1Module
   build-parameters:
     builder: custom
     commands:
